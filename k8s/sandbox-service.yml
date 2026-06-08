@@ -9,4 +9,4 @@ spec:
   ports:
     - name: main-sandbox-port
       port: 80
-      targetPort: 8080
+      targetPort: 3000
