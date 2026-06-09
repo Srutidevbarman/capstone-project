@@ -1,4 +1,4 @@
-import { k8sApi } from "./config.js";
+import { k8sCoreV1Api } from "./config.js";
 
 export async function createService(sandboxId) {
   const serviceManifest = {
@@ -16,7 +16,7 @@ export async function createService(sandboxId) {
       },
       ports: [
         {
-          port: 5173,
+          port: 80,
           targetPort: 5173,
           name: "http",
           protocol: "TCP",
@@ -24,9 +24,9 @@ export async function createService(sandboxId) {
       ],
     },
   };
-  const response = await k8sApi.createNamespacedService(
-    "default",
-    serviceManifest,
-  );
+  const response = await k8sCoreV1Api.createNamespacedService({
+    namespace: "default",
+    body: serviceManifest,
+  });
   return response;
 }

@@ -16,7 +16,7 @@ app.get("/api/sandbox/health", (req, res) => {
 app.post("/api/sandbox/start", async (req, res) => {
   const sandboxId = uuid();
   await Promise.all([createPod(sandboxId), createService(sandboxId)]);
-  return res.status(200).json({
+  return res.status(201).json({
     message: "Sandbox started successfully!",
     sandboxId,
     previewUrl: `http://${sandboxId}.preview.localhost`,
