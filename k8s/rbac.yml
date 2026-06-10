@@ -22,8 +22,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: resource-manager
-    namespace: default
 roleRef:
-  kind: ClusterRole
+  kind: Role
   name: resource-manager
   apiGroup: rbac.authorization.k8s.io
