@@ -18,14 +18,14 @@ export async function createPod(sandboxId) {
       ],
       initContainers: [
         {
-          image: "init-container",
-          name: "template",
+          name: "init-container",
+          image: "template",
           imagePullPolicy: "IfNotPresent",
-          commands: ["sh", "-c", "cp -r /workspace/* /seed/"],
+          command: ["sh", "-c", "cp -r /workspace/* /seed/"],
           volumeMounts: [
             {
               name: "workspace-volume",
-              mountPath: "/workspace",
+              mountPath: "/seed",
             },
           ],
         },
