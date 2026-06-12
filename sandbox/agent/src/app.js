@@ -4,7 +4,8 @@ import morgan from "morgan";
 import path from "path";
 
 const app = express();
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const WORK_DIR = "/workspace";
 app.use(morgan("dev"));
 
@@ -39,12 +40,10 @@ app.get("/list-files", async (req, res) => {
     const files = await listFiles(WORK_DIR);
     res.status(200).json({ status: "success", files });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        status: "error",
-        message: `Error listing files: ${err.message}`,
-      });
+    res.status(500).json({
+      status: "error",
+      message: `Error listing files: ${err.message}`,
+    });
   }
 });
 
@@ -52,7 +51,7 @@ app.get("/list-files", async (req, res) => {
 // @desc Read the content of all the files requested in the query parameter "files" and return them as json object
 // -e.g. /read-file?files=file1.txt,/src/file2.txt
 
-app.get("/read-file", async (req, res) => {
+app.get("/read-files", async (req, res) => {
   const files = req.query.files;
 
   if (!files) {
@@ -63,17 +62,18 @@ app.get("/read-file", async (req, res) => {
 
   const fileList = files.split(",");
 
-  await Promise.all(
+  const results = await Promise.all(
     fileList.map(async (file) => {
       const filePath = `${WORK_DIR}/${file}`;
       try {
         const content = await fs.promises.readFile(filePath, "utf-8");
         return {
-          [filePath]: content,
+          [filePath.replace(WORK_DIR, "")]: content,
         };
       } catch (err) {
         return {
-          [filePath]: `Error reading file: ${err.message}`,
+          [filePath.replace(WORK_DIR, "")]:
+            `Error reading file: ${err.message}`,
         };
       }
     }),
@@ -137,6 +137,7 @@ app.post("/create-files", async (req, res) => {
       const { file: filePath, content } = file;
       const fullPath = path.join(WORK_DIR, filePath);
       try {
+        await fs.promises.mkdir(path.dirname(fullPath), { recursive: true });
         await fs.promises.writeFile(fullPath, content, "utf-8");
         return {
           [fullPath]: "File created successfully",
@@ -148,5 +149,9 @@ app.post("/create-files", async (req, res) => {
       }
     }),
   );
+  res.status(200).json({
+    status: "success",
+    results,
+  });
 });
 export default app;
