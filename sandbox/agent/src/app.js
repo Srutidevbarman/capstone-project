@@ -4,8 +4,8 @@ import morgan from "morgan";
 import path from "path";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 const WORK_DIR = "/workspace";
 app.use(morgan("dev"));
 
@@ -101,7 +101,10 @@ app.patch("/update-files", async (req, res) => {
     updates.map(async (update) => {
       const { file, content } = update;
       const filePath = path.join(WORK_DIR, file);
+
       try {
+        console.log(path.dirname(filePath), filePath);
+        await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
         await fs.promises.writeFile(filePath, content, "utf-8");
         return {
           [filePath]: "File updated successfully",

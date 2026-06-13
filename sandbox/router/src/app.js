@@ -4,8 +4,6 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 const app = express();
 
 app.use(morgan("combined"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.get("/api/status/healthz", (req, res) => {
   res.status(200).send("OK");
@@ -34,6 +32,18 @@ function getAgentProxy(sandboxId) {
       target,
       changeOrigin: true,
       ws: true,
+      proxyTimeout: 120000,
+      timeout: 120000,
+      onProxyReq: (proxyReq, req, res) => {
+        if (!req.headers["content-type"]) return;
+        proxyReq.setHeader("content-type", req.headers["content-type"]);
+      },
+      onError: (err, req, res) => {
+        res.writeHead(502, {
+          "Content-Type": "application/json",
+        });
+        res.end(JSON.stringify({ error: "Proxy error", message: err.message }));
+      },
     });
   }
   return agentProxy[sandboxId];
