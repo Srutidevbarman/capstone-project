@@ -6,7 +6,7 @@ metadata:
     name: ai-service
 spec:
   selector:
-    app: ai-service
+    app: ai-server
   type: ClusterIP
   ports:
     - name: ai-http
