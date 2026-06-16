@@ -14,11 +14,4 @@ const agent = createAgent({
   tools: [listFiles, readFiles, updateFiles],
 });
 
-await agent.invoke({
-  messages: [
-    {
-      role: "user",
-      content: "change the theme to white",
-    },
-  ],
-});
+export default agent;
