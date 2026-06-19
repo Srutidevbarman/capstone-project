@@ -5,13 +5,18 @@ import * as z from "zod";
 export const listFiles = tool(
   async ({}, config) => {
     const writer = config.writer;
-    writer.write("listing files in project directly");
+    writer("Listing files in project directory...\n");
 
     const response = await axios.get(
       `http://sandbox-service-${config.context.projectId}:3000/list-files`,
     );
 
-    writer.write("files listed succesfull");
+    writer(
+      "Files listed successfully." +
+        "Files: " +
+        response.data.files.join(",") +
+        "\n",
+    );
 
     return JSON.stringify(response.data.files);
   },
@@ -27,12 +32,12 @@ export const readFiles = tool(
   async ({ files: [] }, config) => {
     const writer = config.writer;
 
-    writer.write("reading files");
+    writer("Reading files..." + files.join(",") + "\n");
     const response = await axios.get(
       `http://sandbox-service-${config.context.projectId}:3000/read-files?files=` +
         files.join(","),
     );
-    writer.write("files read succesfully");
+    writer("Files read successfully.\n");
     return JSON.stringify(response.data);
   },
   {
@@ -53,7 +58,7 @@ export const updateFiles = tool(
   async ({ files }, config) => {
     const writer = config.writer;
 
-    writer.write("updating files");
+    writer("Updating files..." + files.map((f) => f.file).join(",") + "\n");
 
     const response = await axios.patch(
       `http://sandbox-service-${config.context.projectId}:3000/update-files`,
@@ -61,7 +66,7 @@ export const updateFiles = tool(
         updates: files,
       },
     );
-    writer.write("files updated succesfully");
+    writer("Files updated successfully.\n");  
 
     return JSON.stringify(response.data.results);
   },

@@ -7,6 +7,10 @@ const agentRouter = Router();
 agentRouter.post("/invoke", async (req, res) => {
   try {
     const { message, projectId } = req.body;
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
     const systemMessage = `You are an expert developer. Your task is to help create and modify project files using the available tools.
 
 IMPORTANT: You MUST use the tools to actually create or modify files. Do not just provide instructions.
@@ -32,14 +36,20 @@ When creating a project, use update_files to actually create all the necessary f
       },
     );
 
+    // const chunks = [];
     for await (const chunk of response) {
-      // res.write(chunk);
+      // chunks.push(chunk);
       console.log(chunk);
+      res.write(`data: ${chunk}\n\n`);
     }
-    res.json({ response });
+    res.json({ success: true });
   } catch (error) {
     console.error("error invoking agent :", error);
-    res.status(500).json({ error: "failed invoke agent" });
+    res.status(500).json({
+      error: "failed invoke agent",
+      message: error.message,
+      stack: error.stack,
+    });
   }
 });
 
