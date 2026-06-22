@@ -1,0 +1,136 @@
+POST - http://localhost/api/sandbox/start 
+
+this api will create a sandbox and return data like this -
+
+{
+    "message": "Sandbox started successfully!",
+    "sandboxId": "019eef70-7b16-7193-bb58-9ed2ecb0474c",
+    "previewUrl": "http://019eef70-7b16-7193-bb58-9ed2ecb0474c.preview.localhost"
+}
+
+---
+
+GET - http://019eef70-7b16-7193-bb58-9ed2ecb0474c.agent.localhost/list-files
+
+
+it will return the all the available files and folders in the sandbox. there are many folders and files in it such as-
+
+{
+    "status": "success",
+    "files": [
+        "README.md",
+        "dockerfile",
+        "eslint.config.js",
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "public/vite.svg",
+        "src/App.css",
+        "src/App.jsx",
+        "src/assets/react.svg",
+        "src/index.css",
+        "src/main.jsx",
+        "vite.config.js"
+    ]
+}
+
+---
+
+GET - http://019eef70-7b16-7193-bb58-9ed2ecb0474c.agent.localhost/read-files?files=src/App.jsx
+
+
+it will return the content of the file. such as-
+
+
+{
+    "status": "success",
+    "files": [
+        {
+            "/src/App.jsx": "import { useState } from 'react'\r\nimport reactLogo from './assets/react.svg'\r\nimport viteLogo from '/vite.svg'\r\nimport './App.css'\r\n\r\nfunction App() {\r\n  const [count, setCount] = useState(0)\r\n\r\n  return (\r\n    <>\r\n      <div>\r\n        <a href=\"https://vite.dev\" target=\"_blank\">\r\n          <img src={viteLogo} className=\"logo\" alt=\"Vite logo\" />\r\n        </a>\r\n        <a href=\"https://react.dev\" target=\"_blank\">\r\n          <img src={reactLogo} className=\"logo react\" alt=\"React logo\" />\r\n        </a>\r\n      </div>\r\n      <h1>Vite + React</h1>\r\n      <div className=\"card\">\r\n        <button onClick={() => setCount((count) => count + 1)}>\r\n          count is {count}\r\n        </button>\r\n        <p>\r\n          Edit <code>src/App.jsx</code> and save to test HMR\r\n        </p>\r\n      </div>\r\n      <p className=\"read-the-docs\">\r\n        Click on the Vite and React logos to learn more\r\n      </p>\r\n    </>\r\n  )\r\n}\r\n\r\nexport default App\r\n"
+        }
+    ]
+}
+
+---
+
+PATCH - http://019eef70-7b16-7193-bb58-9ed2ecb0474c.agent.localhost/update-files
+
+
+this api will update the files in the sandbox and create new content in the respective files . such as-
+
+the input is luke this- 
+
+{
+    "updates": [
+        {
+            "file": "/src/App.jsx",
+            "content": "import { useState } from 'react'\nimport reactLogo from './assets/react.svg'\nimport viteLogo from '/vite.svg'\nimport './App.css'\n\nfunction App() {\n  const [count, setCount] = useState(0)\n\n  return (\n    <>\n      <div>\n        <a href=\"https://vite.dev\" target=\"_blank\">\n          <img src={viteLogo} className=\"logo\" alt=\"Vite logo\" />\n        </a>\n        <a href=\"https://react.dev\" target=\"_blank\">\n          <img src={reactLogo} className=\"logo react\" alt=\"React logo\" />\n        </a>\n      </div>\n      <h1>hello dosto</h1>\n      <div className=\"card\">\n        <button onClick={() => setCount((count) => count + 1)}>\n          count is {count}\n        </button>\n        <p>\n          Edit <code>src/App.jsx</code> and save to test HMR\n        </p>\n      </div>\n      <p className=\"read-the-docs\">\n        Click on the Vite and React logos to learn more\n      </p>\n    </>\n  )\n}\n\nexport default App\n"
+        }
+    ]
+}
+
+and the response we get like this -
+
+{
+    "status": "success",
+    "results": [
+        {
+            "/workspace/src/App.jsx": "File updated successfully"
+        }
+    ]
+}
+
+---
+
+POST - http://localhost/api/ai/invoke
+
+
+this api will invoke the ai model . and provide  response that what to do . and also the previous interaction that was done with the ai model . such as -
+
+the input is like this-
+
+{
+    "message": "make a snake game",
+    "projectId": "019eef70-7b16-7193-bb58-9ed2ecb0474c"
+}
+
+and the response we get like this-
+
+(empty)
+18:51:32.717
+Files updated successfully.
+18:51:32.706
+(empty)
+18:51:32.692
+Updating files.../src/snake-game/index.html,/src/snake-game/style.css,/src/snake-game/script.js
+18:51:32.675
+(empty)
+18:50:46.771
+Files listed successfully.Files: README.md,dockerfile,eslint.config.js,index.html,package-lock.json,package.json,public/vite.svg,src/App.css,src/App.jsx,src/assets/react.svg,src/index.css,src/main.jsx
+18:50:46.757
+(empty)
+18:50:46.747
+Listing files in project directory...
+18:50:46.733
+(empty)
+18:49:13.438
+Files listed successfully.Files: README.md,dockerfile,eslint.config.js,index.html,package-lock.json,package.json,public/vite.svg,src/App.css,src/App.jsx,src/assets/react.svg,src/index.css,src/main.jsx
+18:49:13.434
+(empty)
+18:49:13.393
+Listing files in project directory...
+18:49:13.381
+Connected to http://localhost/api/ai/invoke
+
+
+---
+
+and a socket.io url 
+
+http://019eef70-7b16-7193-bb58-9ed2ecb0474c.agent.localhost --- use xtreme js for terminal in the frontend 
+
+with event name "terminal-input" for input and "terminal-output" for output 
+
+
+
+
